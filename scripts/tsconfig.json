@@ -1,0 +1,4 @@
+{
+  "extends": "@cangu-finance/config/tsconfig.base.json",
+  "include": ["*.ts"]
+}

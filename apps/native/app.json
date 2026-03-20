@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "scheme": "cangu-finance",
+    "userInterfaceStyle": "automatic",
+    "orientation": "default",
+    "web": {
+      "bundler": "metro"
+    },
+    "name": "cangu-finance",
+    "slug": "cangu-finance",
+    "plugins": ["expo-font"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "android": {
+      "package": "com.anonymous.cangufinance"
+    }
+  }
+}
