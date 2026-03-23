@@ -11,7 +11,7 @@ import { serverUrl } from '@/lib/server-url'
 export const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
-      console.log(error)
+      console.error('Query Error:', error)
     },
   }),
 })
@@ -40,5 +40,4 @@ export const link = new RPCLink({
 })
 
 export const client: AppRouterClient = createORPCClient(link)
-
 export const orpc = createTanstackQueryUtils(client)

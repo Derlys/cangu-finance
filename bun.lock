@@ -24,6 +24,10 @@
       "dependencies": {
         "@ai-sdk/react": "catalog:",
         "@better-auth/expo": "catalog:",
+        "@cangu-finance/api": "workspace:*",
+        "@cangu-finance/better-auth-solana": "workspace:*",
+        "@cangu-finance/env": "workspace:*",
+        "@cangu-finance/solana-client": "workspace:*",
         "@expo/metro-runtime": "~6.1.2",
         "@expo/vector-icons": "^15.0.3",
         "@gorhom/bottom-sheet": "^5",
@@ -31,10 +35,6 @@
         "@orpc/tanstack-query": "catalog:",
         "@react-navigation/drawer": "^7.3.9",
         "@react-navigation/elements": "^2.8.1",
-        "@cangu-finance/api": "workspace:*",
-        "@cangu-finance/better-auth-solana": "workspace:*",
-        "@cangu-finance/env": "workspace:*",
-        "@cangu-finance/solana-client": "workspace:*",
         "@solana/kit": "catalog:",
         "@stardazed/streams-text-encoding": "^1.0.2",
         "@tanstack/react-query": "^5.90.12",
@@ -59,6 +59,7 @@
         "react-native": "0.81.5",
         "react-native-gesture-handler": "~2.28.0",
         "react-native-keyboard-controller": "1.18.5",
+        "react-native-progress": "^5.0.1",
         "react-native-quick-crypto": "^1.0.9",
         "react-native-reanimated": "~4.1.1",
         "react-native-safe-area-context": "~5.6.0",
@@ -84,13 +85,13 @@
       "dependencies": {
         "@ai-sdk/devtools": "^0.0.2",
         "@ai-sdk/google": "^3.0.1",
-        "@orpc/openapi": "catalog:",
-        "@orpc/server": "catalog:",
-        "@orpc/zod": "catalog:",
         "@cangu-finance/api": "workspace:*",
         "@cangu-finance/auth": "workspace:*",
         "@cangu-finance/db": "workspace:*",
         "@cangu-finance/env": "workspace:*",
+        "@orpc/openapi": "catalog:",
+        "@orpc/server": "catalog:",
+        "@orpc/zod": "catalog:",
         "ai": "catalog:",
         "better-auth": "catalog:",
         "dotenv": "catalog:",
@@ -109,15 +110,15 @@
       "dependencies": {
         "@ai-sdk/react": "catalog:",
         "@base-ui/react": "^1.0.0",
-        "@libsql/client": "catalog:",
-        "@orpc/client": "catalog:",
-        "@orpc/server": "catalog:",
-        "@orpc/tanstack-query": "catalog:",
         "@cangu-finance/api": "workspace:*",
         "@cangu-finance/auth": "workspace:*",
         "@cangu-finance/better-auth-solana": "workspace:*",
         "@cangu-finance/env": "workspace:*",
         "@cangu-finance/solana-client": "workspace:*",
+        "@libsql/client": "catalog:",
+        "@orpc/client": "catalog:",
+        "@orpc/server": "catalog:",
+        "@orpc/tanstack-query": "catalog:",
         "@solana-mobile/wallet-standard-mobile": "^0.4.4",
         "@solana-program/memo": "^0.10.0",
         "@solana/kit": "catalog:",
@@ -168,14 +169,14 @@
     "packages/api": {
       "name": "@cangu-finance/api",
       "dependencies": {
-        "@orpc/client": "catalog:",
-        "@orpc/openapi": "catalog:",
-        "@orpc/server": "catalog:",
-        "@orpc/zod": "catalog:",
         "@cangu-finance/auth": "workspace:*",
         "@cangu-finance/db": "workspace:*",
         "@cangu-finance/env": "workspace:*",
         "@cangu-finance/solana-client": "workspace:*",
+        "@orpc/client": "catalog:",
+        "@orpc/openapi": "catalog:",
+        "@orpc/server": "catalog:",
+        "@orpc/zod": "catalog:",
         "@solana/kit": "catalog:",
         "dotenv": "catalog:",
         "drizzle-orm": "catalog:",
@@ -223,8 +224,8 @@
     "packages/db": {
       "name": "@cangu-finance/db",
       "dependencies": {
-        "@libsql/client": "catalog:",
         "@cangu-finance/env": "workspace:*",
+        "@libsql/client": "catalog:",
         "dotenv": "catalog:",
         "drizzle-orm": "catalog:",
         "libsql": "catalog:",
@@ -549,6 +550,20 @@
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.3.14", "", { "os": "win32", "cpu": "x64" }, "sha512-oizCjdyQ3WJEswpb3Chdngeat56rIdSYK12JI3iI11Mt5T5EXcZ7WLuowzEaFPNJ3zmOQFliMN8QY1Pi+qsfdQ=="],
 
     "@braintree/sanitize-url": ["@braintree/sanitize-url@7.1.2", "", {}, "sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA=="],
+
+    "@cangu-finance/api": ["@cangu-finance/api@workspace:packages/api"],
+
+    "@cangu-finance/auth": ["@cangu-finance/auth@workspace:packages/auth"],
+
+    "@cangu-finance/better-auth-solana": ["@cangu-finance/better-auth-solana@workspace:packages/better-auth-solana"],
+
+    "@cangu-finance/config": ["@cangu-finance/config@workspace:packages/config"],
+
+    "@cangu-finance/db": ["@cangu-finance/db@workspace:packages/db"],
+
+    "@cangu-finance/env": ["@cangu-finance/env@workspace:packages/env"],
+
+    "@cangu-finance/solana-client": ["@cangu-finance/solana-client@workspace:packages/solana-client"],
 
     "@chevrotain/cst-dts-gen": ["@chevrotain/cst-dts-gen@11.0.3", "", { "dependencies": { "@chevrotain/gast": "11.0.3", "@chevrotain/types": "11.0.3", "lodash-es": "4.17.21" } }, "sha512-BvIKpRLeS/8UbfxXxgC33xOumsacaeCKAjAeLyOn7Pcp95HiRbrpl14S+9vaZLolnbssPIUuiUd8IvgkRyt6NQ=="],
 
@@ -1049,20 +1064,6 @@
     "@sinonjs/commons": ["@sinonjs/commons@3.0.1", "", { "dependencies": { "type-detect": "4.0.8" } }, "sha512-K3mCHKQ9sVh8o1C9cxkwxaOmXoAMlDxC1mYyHrjqOWEcBjYr76t96zL2zlj5dUGZ3HSw240X1qgH3Mjf1yJWpQ=="],
 
     "@sinonjs/fake-timers": ["@sinonjs/fake-timers@10.3.0", "", { "dependencies": { "@sinonjs/commons": "^3.0.0" } }, "sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA=="],
-
-    "@cangu-finance/api": ["@cangu-finance/api@workspace:packages/api"],
-
-    "@cangu-finance/auth": ["@cangu-finance/auth@workspace:packages/auth"],
-
-    "@cangu-finance/better-auth-solana": ["@cangu-finance/better-auth-solana@workspace:packages/better-auth-solana"],
-
-    "@cangu-finance/config": ["@cangu-finance/config@workspace:packages/config"],
-
-    "@cangu-finance/db": ["@cangu-finance/db@workspace:packages/db"],
-
-    "@cangu-finance/env": ["@cangu-finance/env@workspace:packages/env"],
-
-    "@cangu-finance/solana-client": ["@cangu-finance/solana-client@workspace:packages/solana-client"],
 
     "@solana-mobile/mobile-wallet-adapter-protocol": ["@solana-mobile/mobile-wallet-adapter-protocol@2.2.5", "", { "dependencies": { "@solana/codecs-strings": "^4.0.0", "@solana/wallet-standard": "^1.1.2", "@solana/wallet-standard-util": "^1.1.1", "@wallet-standard/core": "^1.0.3", "js-base64": "^3.7.5" }, "peerDependencies": { "react-native": ">0.69" } }, "sha512-kCI+0/umWm98M9g12ndpS56U6wBzq4XdhobCkDPF8qRDYX/iTU8CD+QMcalh7VgRT7GWEmySQvQdaugM0Chf0g=="],
 
@@ -2902,6 +2903,8 @@
 
     "prompts": ["prompts@2.4.2", "", { "dependencies": { "kleur": "^3.0.3", "sisteransi": "^1.0.5" } }, "sha512-NxNv/kLguCA7p3jE8oL2aEBsrJWgAakBpgmgK6lpPWV+WuOmY6r2/zbAVnP+T8bQlA0nzHXSJSJW0Hq7ylaD2Q=="],
 
+    "prop-types": ["prop-types@15.8.1", "", { "dependencies": { "loose-envify": "^1.4.0", "object-assign": "^4.1.1", "react-is": "^16.13.1" } }, "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="],
+
     "property-information": ["property-information@7.1.0", "", {}, "sha512-TwEZ+X+yCJmYfL7TPUOcvBZ4QfoT5YenQiJuX//0th53DE6w0xxLEtfK3iyryQFddXuvkIk51EEgrJQ0WJkOmQ=="],
 
     "proxy-addr": ["proxy-addr@2.0.7", "", { "dependencies": { "forwarded": "0.2.0", "ipaddr.js": "1.9.1" } }, "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg=="],
@@ -2961,6 +2964,8 @@
     "react-native-keyboard-controller": ["react-native-keyboard-controller@1.18.5", "", { "dependencies": { "react-native-is-edge-to-edge": "^1.2.1" }, "peerDependencies": { "react": "*", "react-native": "*", "react-native-reanimated": ">=3.0.0" } }, "sha512-wbYN6Tcu3G5a05dhRYBgjgd74KqoYWuUmroLpigRg9cXy5uYo7prTMIvMgvLtARQtUF7BOtFggUnzgoBOgk0TQ=="],
 
     "react-native-nitro-modules": ["react-native-nitro-modules@0.33.5", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-qM1xuK6v9blumGCatR2x98vw5Ck/V6r54eDMV7fJkxYKi1qJH44Lf7V/suu90rqDlasO+AcqlHKBgklcjwnYuQ=="],
+
+    "react-native-progress": ["react-native-progress@5.0.1", "", { "dependencies": { "prop-types": "^15.7.2" }, "peerDependencies": { "react-native-svg": "*" } }, "sha512-TYfJ4auAe5vubDma2yfFvt7ktSI+UCfysqJnkdHEcLXqAitRFOozgF/cLgN5VNi/iLdaf3ga1ETi2RF4jVZ/+g=="],
 
     "react-native-quick-base64": ["react-native-quick-base64@2.2.2", "", { "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-WLHSifHLoamr2kF00Gov0W9ud6CfPshe1rmqWTquVIi9c62qxOaJCFVDrXFZhEBU8B8PvGLVuOlVKH78yhY0Fg=="],
 
@@ -4045,6 +4050,8 @@
     "postcss/picocolors": ["picocolors@1.1.1", "", {}, "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="],
 
     "prompts/kleur": ["kleur@3.0.3", "", {}, "sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w=="],
+
+    "prop-types/react-is": ["react-is@16.13.1", "", {}, "sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ=="],
 
     "qrcode/yargs": ["yargs@15.4.1", "", { "dependencies": { "cliui": "^6.0.0", "decamelize": "^1.2.0", "find-up": "^4.1.0", "get-caller-file": "^2.0.1", "require-directory": "^2.1.1", "require-main-filename": "^2.0.0", "set-blocking": "^2.0.0", "string-width": "^4.2.0", "which-module": "^2.0.0", "y18n": "^4.0.0", "yargs-parser": "^18.1.2" } }, "sha512-aePbxDmcYW++PaqBsJ+HYUFwCdv4LVvdnhBy78E57PIor8/OVvhMrADFFEDh8DHDFRv/O9i3lPhsENjO7QX0+A=="],
 
