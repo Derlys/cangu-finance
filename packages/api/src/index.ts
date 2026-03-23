@@ -1,9 +1,7 @@
 import { ORPCError, os } from '@orpc/server'
-
 import type { Context } from './context'
 
 export const o = os.$context<Context>()
-
 export const publicProcedure = o
 
 const requireAuth = o.middleware(async ({ context, next }) => {
@@ -11,10 +9,9 @@ const requireAuth = o.middleware(async ({ context, next }) => {
     throw new ORPCError('UNAUTHORIZED')
   }
   return next({
-    context: {
-      session: context.session,
-    },
+    context: { session: context.session },
   })
 })
 
 export const protectedProcedure = publicProcedure.use(requireAuth)
+// NO EXPORTES AppRouter AQUÍ

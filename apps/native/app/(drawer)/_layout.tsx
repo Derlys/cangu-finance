@@ -1,4 +1,8 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from '@expo/vector-icons'
 import { Link } from 'expo-router'
 import { Drawer } from 'expo-router/drawer'
 import { useThemeColor } from 'heroui-native'
@@ -40,6 +44,20 @@ function DrawerLayout() {
               name="home-outline"
               size={size}
               color={focused ? color : themeColorForeground}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="vaults"
+        options={{
+          drawerLabel: 'Ahorros',
+          title: 'Mis Metas',
+          drawerIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="piggy-bank"
+              size={size}
+              color={color}
             />
           ),
         }}
