@@ -51,17 +51,21 @@ function DrawerLayout() {
       <Drawer.Screen
         name="vaults"
         options={{
-          drawerLabel: 'Ahorros',
-          title: 'Mis Metas',
-          drawerIcon: ({ color, size }) => (
+          headerTitle: 'Mis Metas',
+          drawerLabel: ({ color, focused }) => (
+            <Text style={{ color: focused ? color : themeColorForeground }}>
+              Ahorros
+            </Text>
+          ),
+          drawerIcon: ({ size, color, focused }) => (
             <MaterialCommunityIcons
               name="piggy-bank"
               size={size}
-              color={color}
+              color={focused ? color : themeColorForeground}
             />
           ),
         }}
-      />
+      />{' '}
       <Drawer.Screen
         name="(tabs)"
         options={{

@@ -13,7 +13,7 @@ export default function VaultsScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <Text style={styles.header}>Mis Metas de Ahorro</Text>
+        <Text style={styles.header}>Estas son mis metas</Text>
       </View>
 
       <FlatList
