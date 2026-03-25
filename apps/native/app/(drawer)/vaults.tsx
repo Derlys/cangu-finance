@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Button, Input, TextField } from 'heroui-native'
 import React, { useState } from 'react'
 import {
@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native'
 import { GoalCard } from '@/components/goal-card'
+import { authClient } from '@/lib/auth-client'
 import { orpc } from '@/utils/orpc'
 
 export default function VaultsScreen() {
@@ -17,20 +18,38 @@ export default function VaultsScreen() {
   const [name, setName] = useState('')
   const [target, setTarget] = useState('')
 
+  const { data: session } = authClient.useSession()
+  const walletAddress = session?.user?.id || 'placeholder-wallet'
+
   const {
     data: goals,
     isLoading,
     error,
+    refetch,
   } = useQuery(
     orpc.vaults.getGoals.queryOptions({
-      input: { walletAddress: 'placeholder-wallet' },
+      input: { walletAddress },
     }),
   )
+
+  const createGoalMutation = useMutation(
+    orpc.vaults.createGoal.mutationOptions({
+      onSuccess: () => {
+        refetch()
+        setName('')
+        setTarget('')
+        setShowForm(false)
+      },
+    }),
+  )
+
   const handleCreateGoal = () => {
-    console.log('Creando meta:', { name, target: Number.parseFloat(target) })
-    setName('')
-    setTarget('')
-    setShowForm(false)
+    if (!name || !target) return
+    createGoalMutation.mutate({
+      name,
+      target: Number.parseFloat(target),
+      symbol: '$',
+    })
   }
 
   if (isLoading) {
@@ -89,10 +108,10 @@ export default function VaultsScreen() {
             <Button
               className="mt-4"
               onPress={handleCreateGoal}
-              isDisabled={!name || !target}
+              isDisabled={!name || !target || createGoalMutation.isPending}
             >
               <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                Crear meta
+                {createGoalMutation.isPending ? 'Creando...' : 'Crear meta'}
               </Text>
             </Button>
           </View>
