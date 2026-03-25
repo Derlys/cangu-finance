@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { GoalCard } from '@/components/goal-card'
 import { authClient } from '@/lib/auth-client'
-import { orpc } from '@/utils/orpc'
+import { orpc, queryClient } from '@/utils/orpc'
 
 export default function VaultsScreen() {
   const [showForm, setShowForm] = useState(false)
@@ -47,6 +47,9 @@ export default function VaultsScreen() {
     orpc.vaults.addProgress.mutationOptions({
       onSuccess: () => {
         refetch()
+        queryClient.invalidateQueries(
+          orpc.vaults.getWalletSummary.queryOptions(),
+        )
       },
     }),
   )

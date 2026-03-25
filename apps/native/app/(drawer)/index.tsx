@@ -14,6 +14,7 @@ import { orpc, queryClient } from '@/utils/orpc'
 export default function Home() {
   const healthCheck = useQuery(orpc.healthCheck.queryOptions())
   const privateData = useQuery(orpc.privateData.queryOptions())
+  const walletSummary = useQuery(orpc.vaults.getWalletSummary.queryOptions())
   const isConnected = healthCheck?.data === 'OK'
   const isLoading = healthCheck?.isLoading
   const { data: session } = authClient.useSession()
@@ -26,9 +27,38 @@ export default function Home() {
     <Container className="space-y-6 p-6">
       <View className="mb-6 py-4">
         <Text className="mb-2 font-bold text-4xl text-foreground">
-          Cangu Finance
+          Cangu finance
         </Text>
       </View>
+      {session?.user && (
+        <Card variant="secondary" className="mb-6 p-6">
+          <Text className="mb-1 text-muted text-xs uppercase tracking-widest">
+            Disponible para gastar
+          </Text>
+          <Text className="mb-4 font-bold text-4xl text-foreground">
+            ${walletSummary.data?.availableBalance.toFixed(2) ?? '0.00'}
+          </Text>
+
+          <View className="flex-row justify-between border-muted/20 border-t pt-4">
+            <View>
+              <Text className="text-[10px] text-muted uppercase">
+                Saldo Total
+              </Text>
+              <Text className="font-semibold text-foreground">
+                ${walletSummary.data?.realBalance.toFixed(2) ?? '0.00'}
+              </Text>
+            </View>
+            <View className="items-end">
+              <Text className="text-[10px] text-muted uppercase">
+                En Vaults
+              </Text>
+              <Text className="font-semibold text-primary">
+                -${walletSummary.data?.totalSaved.toFixed(2) ?? '0.00'}
+              </Text>
+            </View>
+          </View>
+        </Card>
+      )}
 
       <View className="mb-6">
         <SolanaConnect />
@@ -51,59 +81,6 @@ export default function Home() {
           </Pressable>
         </Card>
       ) : null}
-
-      <Card variant="secondary" className="p-6">
-        <View className="mb-4 flex-row items-center justify-between">
-          <Card.Title>System Status</Card.Title>
-          <Chip
-            variant="secondary"
-            color={isConnected ? 'success' : 'danger'}
-            size="sm"
-          >
-            <Chip.Label>{isConnected ? 'LIVE' : 'OFFLINE'}</Chip.Label>
-          </Chip>
-        </View>
-
-        <Card className="p-4">
-          <View className="flex-row items-center">
-            <View
-              className={`mr-3 h-3 w-3 rounded-full ${isConnected ? 'bg-success' : 'bg-muted'}`}
-            />
-            <View className="flex-1">
-              <Text className="mb-1 font-medium text-foreground">
-                ORPC Backend
-              </Text>
-              <Card.Description>
-                {isLoading
-                  ? 'Checking connection...'
-                  : isConnected
-                    ? 'Connected to API'
-                    : 'API Disconnected'}
-              </Card.Description>
-            </View>
-            {isLoading && (
-              <Ionicons name="hourglass-outline" size={20} color={mutedColor} />
-            )}
-            {!isLoading && isConnected && (
-              <Ionicons
-                name="checkmark-circle"
-                size={20}
-                color={successColor}
-              />
-            )}
-            {!isLoading && !isConnected && (
-              <Ionicons name="close-circle" size={20} color={dangerColor} />
-            )}
-          </View>
-        </Card>
-      </Card>
-
-      <Card variant="secondary" className="my-6 p-4">
-        <Card.Title className="mb-3">Private Data</Card.Title>
-        <Card.Description>
-          {privateData.data?.message || 'You are signed out'}
-        </Card.Description>
-      </Card>
 
       {!session?.user && (
         <View className="flex gap-6">
