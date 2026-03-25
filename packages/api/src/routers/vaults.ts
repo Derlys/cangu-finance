@@ -71,9 +71,32 @@ export const completeGoal = protectedProcedure
     return { success: true }
   })
 
+export const getWalletSummary = protectedProcedure.handler(
+  async ({ context }) => {
+    const walletAddress = context.session.user.id
+    const realBalance = 1250.5
+
+    const [result] = await context.db
+      .select({
+        totalSaved: sql<number>`CAST(SUM(${goals.current}) AS FLOAT)`,
+      })
+      .from(goals)
+      .where(eq(goals.walletAddress, walletAddress))
+
+    const totalSaved = result?.totalSaved || 0
+
+    return {
+      realBalance,
+      totalSaved,
+      availableBalance: realBalance - totalSaved,
+    }
+  },
+)
+
 export const vaultsRouter = {
   getGoals,
   createGoal,
   addProgress,
   completeGoal,
+  getWalletSummary,
 }
