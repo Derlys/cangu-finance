@@ -1,17 +1,47 @@
-import React from 'react'
+import { Ionicons } from '@expo/vector-icons'
+import { Button, Input, TextField } from 'heroui-native'
+import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import * as Progress from 'react-native-progress'
 
 interface GoalCardProps {
+  id: number
   name: string
   current: number
   target: number
   symbol: string
+  onAddProgress: (goalId: number, amount: number) => void
+  isAddingProgress?: boolean
 }
 
-export const GoalCard = ({ name, current, target, symbol }: GoalCardProps) => {
+export const GoalCard = ({
+  id,
+  name,
+  current,
+  target,
+  symbol,
+  onAddProgress,
+  isAddingProgress,
+}: GoalCardProps) => {
+  const [showInput, setShowInput] = useState(false)
+  const [amount, setAmount] = useState('')
+
   const progress = target > 0 ? current / target : 0
   const isCompleted = current >= target
+
+  const handleAdd = () => {
+    const numAmount = Number.parseFloat(amount)
+    if (numAmount > 0) {
+      onAddProgress(id, numAmount)
+      setAmount('')
+      setShowInput(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setAmount('')
+    setShowInput(false)
+  }
 
   return (
     <View style={styles.card}>
@@ -41,9 +71,46 @@ export const GoalCard = ({ name, current, target, symbol }: GoalCardProps) => {
         borderRadius={5}
       />
 
-      <Text style={styles.percentage}>
-        {Math.round(progress * 100)}% alcanzado
-      </Text>
+      {showInput ? (
+        <View style={styles.inputRow}>
+          <TextField className="flex-1">
+            <Input
+              placeholder="Monto"
+              keyboardType="numeric"
+              value={amount}
+              onChangeText={setAmount}
+              autoFocus
+            />
+          </TextField>
+          <Button
+            size="sm"
+            variant="primary"
+            isDisabled={!amount || isAddingProgress}
+            onPress={handleAdd}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>Agregar</Text>
+          </Button>
+          <Button size="sm" variant="secondary" onPress={handleCancel}>
+            <Text style={{ color: '#64748B' }}>Cancelar</Text>
+          </Button>
+        </View>
+      ) : (
+        <View style={styles.footer}>
+          <Text style={styles.percentage}>
+            {Math.round(progress * 100)}% alcanzado
+          </Text>
+          {!isCompleted && (
+            <Button
+              size="sm"
+              variant="primary"
+              isDisabled={isAddingProgress}
+              onPress={() => setShowInput(true)}
+            >
+              <Ionicons name="add-circle" size={18} color="white" />
+            </Button>
+          )}
+        </View>
+      )}
     </View>
   )
 }
@@ -95,10 +162,20 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   percentage: {
-    marginTop: 8,
-    textAlign: 'right',
     fontSize: 12,
     fontWeight: '600',
     color: '#64748B',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  inputRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
   },
 })

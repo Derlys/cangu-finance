@@ -43,6 +43,18 @@ export default function VaultsScreen() {
     }),
   )
 
+  const addProgressMutation = useMutation(
+    orpc.vaults.addProgress.mutationOptions({
+      onSuccess: () => {
+        refetch()
+      },
+    }),
+  )
+
+  const handleAddProgress = (goalId: number, amount: number) => {
+    addProgressMutation.mutate({ goalId, amount })
+  }
+
   const handleCreateGoal = () => {
     if (!name || !target) return
     createGoalMutation.mutate({
@@ -123,10 +135,13 @@ export default function VaultsScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <GoalCard
+            id={item.id}
             name={item.name}
             current={item.current}
             target={item.target}
             symbol={item.symbol}
+            onAddProgress={handleAddProgress}
+            isAddingProgress={addProgressMutation.isPending}
           />
         )}
         ListEmptyComponent={
