@@ -1,6 +1,5 @@
-import { Ionicons } from '@expo/vector-icons'
 import { useQuery } from '@tanstack/react-query'
-import { Card, Chip, useThemeColor } from 'heroui-native'
+import { Card } from 'heroui-native'
 import { Pressable, Text, View } from 'react-native'
 
 import { Container } from '@/components/container'
@@ -12,16 +11,9 @@ import { authClient } from '@/lib/auth-client'
 import { orpc, queryClient } from '@/utils/orpc'
 
 export default function Home() {
-  const healthCheck = useQuery(orpc.healthCheck.queryOptions())
-  const privateData = useQuery(orpc.privateData.queryOptions())
+  const _healthCheck = useQuery(orpc.healthCheck.queryOptions())
   const walletSummary = useQuery(orpc.vaults.getWalletSummary.queryOptions())
-  const isConnected = healthCheck?.data === 'OK'
-  const isLoading = healthCheck?.isLoading
   const { data: session } = authClient.useSession()
-
-  const mutedColor = useThemeColor('muted')
-  const successColor = useThemeColor('success')
-  const dangerColor = useThemeColor('danger')
 
   return (
     <Container className="space-y-6 p-6">

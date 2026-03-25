@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Button, Input, TextField } from 'heroui-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
   ActivityIndicator,
   FlatList,

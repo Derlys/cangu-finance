@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import { Button, Input, TextField } from 'heroui-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import * as Progress from 'react-native-progress'
 
