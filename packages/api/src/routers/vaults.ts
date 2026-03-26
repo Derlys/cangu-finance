@@ -129,7 +129,7 @@ export const getWalletSummary = protectedProcedure.handler(
           solBalance: 0,
           solPriceInUsd: 0,
           totalBalanceUsd: 0,
-          totalSavedUsd: 0,
+          totalGoalTargetUsd: 0,
           availableUsd: 0,
           currency: 'USD',
           walletAddress: null,

@@ -18,8 +18,6 @@ export default function VaultsScreen() {
   const [name, setName] = useState('')
   const [target, setTarget] = useState('')
 
-  const { data: session } = authClient.useSession()
-
   const {
     data: goals,
     isLoading,
