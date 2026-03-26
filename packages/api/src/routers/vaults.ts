@@ -2,17 +2,27 @@ import { goals, walletAddress } from '@cangu-finance/db/schema/index'
 import { Connection, clusterApiUrl, PublicKey } from '@solana/web3.js'
 import { desc, eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
-import { protectedProcedure, publicProcedure } from '../index'
+import { protectedProcedure } from '../index'
 
-export const getGoals = publicProcedure
-  .input(z.object({ walletAddress: z.string() }))
-  .handler(async ({ input, context }) => {
-    return await context.db
-      .select()
-      .from(goals)
-      .where(eq(goals.walletAddress, input.walletAddress))
-      .orderBy(desc(goals.createdAt))
-  })
+export const getGoals = protectedProcedure.handler(async ({ context }) => {
+  const userId = context.session.user.id
+
+  const [wallet] = await context.db
+    .select()
+    .from(walletAddress)
+    .where(eq(walletAddress.userId, userId))
+    .limit(1)
+
+  if (!wallet) {
+    return []
+  }
+
+  return await context.db
+    .select()
+    .from(goals)
+    .where(eq(goals.walletAddress, wallet.address))
+    .orderBy(desc(goals.createdAt))
+})
 
 export const createGoal = protectedProcedure
   .input(
@@ -23,10 +33,20 @@ export const createGoal = protectedProcedure
     }),
   )
   .handler(async ({ input, context }) => {
-    const walletAddress = context.session.user.id
+    const userId = context.session.user.id
+
+    const [wallet] = await context.db
+      .select()
+      .from(walletAddress)
+      .where(eq(walletAddress.userId, userId))
+      .limit(1)
+
+    if (!wallet) {
+      throw new Error('No wallet found for user')
+    }
 
     await context.db.insert(goals).values({
-      walletAddress,
+      walletAddress: wallet.address,
       name: input.name,
       target: input.target,
       symbol: input.symbol,
@@ -72,6 +92,17 @@ export const completeGoal = protectedProcedure
     return { success: true }
   })
 
+export const deleteGoal = protectedProcedure
+  .input(
+    z.object({
+      goalId: z.number(),
+    }),
+  )
+  .handler(async ({ input, context }) => {
+    await context.db.delete(goals).where(eq(goals.id, input.goalId))
+    return { success: true }
+  })
+
 export const getWalletSummary = protectedProcedure.handler(
   async ({ context }) => {
     const userId = context.session.user.id
@@ -109,14 +140,12 @@ export const getWalletSummary = protectedProcedure.handler(
       walletAddressStr = wallet.address
       console.log('[getWalletSummary] Using wallet address:', walletAddressStr)
 
-      // 2. Obtener Balance Real de Solana
       const publicKey = new PublicKey(walletAddressStr)
       console.log('[getWalletSummary] Fetching balance from Solana...')
       const balanceInLamports = await connection.getBalance(publicKey)
       solBalance = balanceInLamports / 1e9
       console.log('[getWalletSummary] Balance in SOL:', solBalance)
 
-      // 3. Obtener Precio de SOL (Coinbase API - Gratis y sin Key)
       const priceRes = await fetch(
         'https://api.coinbase.com/v2/prices/SOL-USD/spot',
       )
@@ -127,25 +156,24 @@ export const getWalletSummary = protectedProcedure.handler(
       console.error('Error fetching wallet data:', e)
     }
 
-    // 4. Obtener Ahorros (en USD según tus metas)
     const [result] = await context.db
       .select({
-        totalSaved: sql<number>`CAST(SUM(${goals.current}) AS FLOAT)`,
+        totalGoalTarget: sql<number>`CAST(SUM(${goals.target}) AS FLOAT)`,
       })
       .from(goals)
       .where(eq(goals.walletAddress, walletAddressStr))
 
-    const totalSavedUsd = result?.totalSaved || 0
+    const totalGoalTargetUsd = result?.totalGoalTarget || 0
     const totalBalanceUsd = solBalance * solPriceInUsd
 
-    const availableUsd = totalBalanceUsd - totalSavedUsd
+    const availableUsd = Math.max(0, totalBalanceUsd - totalGoalTargetUsd)
 
     return {
       solBalance,
       solPriceInUsd,
       totalBalanceUsd,
-      totalSavedUsd,
-      availableUsd: Math.max(0, availableUsd),
+      totalGoalTargetUsd,
+      availableUsd,
       currency: 'USD',
       walletAddress: walletAddressStr,
     }
@@ -156,5 +184,6 @@ export const vaultsRouter = {
   createGoal,
   addProgress,
   completeGoal,
+  deleteGoal,
   getWalletSummary,
 }

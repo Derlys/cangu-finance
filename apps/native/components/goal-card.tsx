@@ -11,7 +11,9 @@ interface GoalCardProps {
   target: number
   symbol: string
   onAddProgress: (goalId: number, amount: number) => void
+  onDelete: (goalId: number) => void
   isAddingProgress?: boolean
+  isDeleting?: boolean
 }
 
 export const GoalCard = ({
@@ -21,7 +23,9 @@ export const GoalCard = ({
   target,
   symbol,
   onAddProgress,
+  onDelete,
   isAddingProgress,
+  isDeleting,
 }: GoalCardProps) => {
   const [showInput, setShowInput] = useState(false)
   const [amount, setAmount] = useState('')
@@ -46,10 +50,20 @@ export const GoalCard = ({
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>{name}</Text>
-        <Text style={[styles.status, isCompleted && styles.completedText]}>
-          {isCompleted ? '✅ Completada' : '🎯 En progreso'}
-        </Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.title}>{name}</Text>
+          <Text style={[styles.status, isCompleted && styles.completedText]}>
+            {isCompleted ? '✅ Completada' : '🎯 En progreso'}
+          </Text>
+        </View>
+        <Button
+          size="sm"
+          variant="outline"
+          isDisabled={isDeleting}
+          onPress={() => onDelete(id)}
+        >
+          <Ionicons name="trash-outline" size={18} color="#EF4444" />
+        </Button>
       </View>
 
       <View style={styles.amountContainer}>
@@ -130,7 +144,11 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 12,
+  },
+  headerLeft: {
+    flex: 1,
   },
   title: {
     fontSize: 18,
