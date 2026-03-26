@@ -1,4 +1,5 @@
-import { goals } from '@cangu-finance/db/schema/index'
+import { goals, walletAddress } from '@cangu-finance/db/schema/index'
+import { Connection, clusterApiUrl, PublicKey } from '@solana/web3.js'
 import { desc, eq, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { protectedProcedure, publicProcedure } from '../index'
@@ -73,26 +74,83 @@ export const completeGoal = protectedProcedure
 
 export const getWalletSummary = protectedProcedure.handler(
   async ({ context }) => {
-    const walletAddress = context.session.user.id
-    const realBalance = 1250.5
+    const userId = context.session.user.id
+    console.log('[getWalletSummary] userId from session:', userId)
 
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed')
+    let solBalance = 0
+    let solPriceInUsd = 0
+    let walletAddressStr = ''
+
+    try {
+      // 1. Obtener la wallet del usuario desde la DB
+      const wallets = await context.db
+        .select()
+        .from(walletAddress)
+        .where(eq(walletAddress.userId, userId))
+        .limit(1)
+
+      console.log('[getWalletSummary] Found wallets:', wallets)
+
+      if (!wallets || wallets.length === 0) {
+        console.log('[getWalletSummary] No wallet found for userId:', userId)
+        return {
+          solBalance: 0,
+          solPriceInUsd: 0,
+          totalBalanceUsd: 0,
+          totalSavedUsd: 0,
+          availableUsd: 0,
+          currency: 'USD',
+          walletAddress: null,
+        }
+      }
+
+      const wallet = wallets[0]!
+      walletAddressStr = wallet.address
+      console.log('[getWalletSummary] Using wallet address:', walletAddressStr)
+
+      // 2. Obtener Balance Real de Solana
+      const publicKey = new PublicKey(walletAddressStr)
+      console.log('[getWalletSummary] Fetching balance from Solana...')
+      const balanceInLamports = await connection.getBalance(publicKey)
+      solBalance = balanceInLamports / 1e9
+      console.log('[getWalletSummary] Balance in SOL:', solBalance)
+
+      // 3. Obtener Precio de SOL (Coinbase API - Gratis y sin Key)
+      const priceRes = await fetch(
+        'https://api.coinbase.com/v2/prices/SOL-USD/spot',
+      )
+      const priceData = (await priceRes.json()) as { data: { amount: string } }
+      solPriceInUsd = Number.parseFloat(priceData.data.amount)
+      console.log('[getWalletSummary] SOL price in USD:', solPriceInUsd)
+    } catch (e) {
+      console.error('Error fetching wallet data:', e)
+    }
+
+    // 4. Obtener Ahorros (en USD según tus metas)
     const [result] = await context.db
       .select({
         totalSaved: sql<number>`CAST(SUM(${goals.current}) AS FLOAT)`,
       })
       .from(goals)
-      .where(eq(goals.walletAddress, walletAddress))
+      .where(eq(goals.walletAddress, walletAddressStr))
 
-    const totalSaved = result?.totalSaved || 0
+    const totalSavedUsd = result?.totalSaved || 0
+    const totalBalanceUsd = solBalance * solPriceInUsd
+
+    const availableUsd = totalBalanceUsd - totalSavedUsd
 
     return {
-      realBalance,
-      totalSaved,
-      availableBalance: realBalance - totalSaved,
+      solBalance,
+      solPriceInUsd,
+      totalBalanceUsd,
+      totalSavedUsd,
+      availableUsd: Math.max(0, availableUsd),
+      currency: 'USD',
+      walletAddress: walletAddressStr,
     }
   },
 )
-
 export const vaultsRouter = {
   getGoals,
   createGoal,
