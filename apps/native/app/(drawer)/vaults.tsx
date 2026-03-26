@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native'
 import { GoalCard } from '@/components/goal-card'
-import { authClient } from '@/lib/auth-client'
 import { orpc, queryClient } from '@/utils/orpc'
 
 export default function VaultsScreen() {
@@ -18,19 +17,12 @@ export default function VaultsScreen() {
   const [name, setName] = useState('')
   const [target, setTarget] = useState('')
 
-  const { data: session } = authClient.useSession()
-  const walletAddress = session?.user?.id || 'placeholder-wallet'
-
   const {
     data: goals,
     isLoading,
     error,
     refetch,
-  } = useQuery(
-    orpc.vaults.getGoals.queryOptions({
-      input: { walletAddress },
-    }),
-  )
+  } = useQuery(orpc.vaults.getGoals.queryOptions())
 
   const createGoalMutation = useMutation(
     orpc.vaults.createGoal.mutationOptions({
@@ -54,8 +46,23 @@ export default function VaultsScreen() {
     }),
   )
 
+  const deleteGoalMutation = useMutation(
+    orpc.vaults.deleteGoal.mutationOptions({
+      onSuccess: () => {
+        refetch()
+        queryClient.invalidateQueries(
+          orpc.vaults.getWalletSummary.queryOptions(),
+        )
+      },
+    }),
+  )
+
   const handleAddProgress = (goalId: number, amount: number) => {
     addProgressMutation.mutate({ goalId, amount })
+  }
+
+  const handleDeleteGoal = (goalId: number) => {
+    deleteGoalMutation.mutate({ goalId })
   }
 
   const handleCreateGoal = () => {
@@ -144,7 +151,9 @@ export default function VaultsScreen() {
             target={item.target}
             symbol={item.symbol}
             onAddProgress={handleAddProgress}
+            onDelete={handleDeleteGoal}
             isAddingProgress={addProgressMutation.isPending}
+            isDeleting={deleteGoalMutation.isPending}
           />
         )}
         ListEmptyComponent={
