@@ -136,7 +136,18 @@ export const getWalletSummary = protectedProcedure.handler(
         }
       }
 
-      const wallet = wallets[0]!
+      const wallet = wallets[0]
+      if (!wallet) {
+        return {
+          solBalance: 0,
+          solPriceInUsd: 0,
+          totalBalanceUsd: 0,
+          totalGoalTargetUsd: 0,
+          availableUsd: 0,
+          currency: 'USD',
+          walletAddress: null,
+        }
+      }
       walletAddressStr = wallet.address
       console.log('[getWalletSummary] Using wallet address:', walletAddressStr)
 

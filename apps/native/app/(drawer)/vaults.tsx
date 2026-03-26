@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native'
 import { GoalCard } from '@/components/goal-card'
-import { authClient } from '@/lib/auth-client'
 import { orpc, queryClient } from '@/utils/orpc'
 
 export default function VaultsScreen() {
